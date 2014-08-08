@@ -1,0 +1,15 @@
+;Seperate independent classes and modules
+;into separate headings. ALWAYS extract
+;in PHP with headings for clarity.
+;--------------------------------------
+
+;Used in the mysql class to connect
+;to the database
+[db_config]
+host		= "localhost"
+port		= 3306
+user		= "appertain"
+pass		= "password"
+database        = "appertain"
+
+
