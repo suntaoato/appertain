@@ -1,6 +1,6 @@
 <?php
 
-include_once("src/classes/mysql/mysql.connection.php");
+include_once("src/classes/mysql/mysqlconnection.php");
 
 class mysqlconnection_Test extends PHPUnit_Framework_TestCase
 {	

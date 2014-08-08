@@ -43,7 +43,7 @@ class mysqlconnection
 	
 	public function __construct($config)
 	{
-		$this->conf 	         = $config;
+		$this->conf             = $config;
 		
 		$this->host             = $this->conf->getKey('db_config','host');
 		$this->port             = $this->conf->getKey('db_config','port');
