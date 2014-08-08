@@ -7,7 +7,7 @@ class conf_Test extends PHPUnit_Framework_TestCase
 {
 	public function testsCanBeRead()
 	{
-		$conf  = new Conf(__DIR__ . "/config.ini");
+		$conf  = new \Classes\Conf\conf(__DIR__ . "/config.ini");
 		$value = $conf->getKey("test","testKey");
 	
 		print("Value fetched: " 
@@ -20,7 +20,7 @@ class conf_Test extends PHPUnit_Framework_TestCase
 	
 	public function testsMainCanBeRead()
 	{
-		$conf  = new Conf(__DIR__ . "/../src/config.ini");
+		$conf  = new \Classes\Conf\conf(__DIR__ . "/../src/config.ini");
 		$value =  $conf->getKey("db_config","host");
       
 		print("Value fetched: " 
