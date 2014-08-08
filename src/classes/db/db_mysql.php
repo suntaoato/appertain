@@ -23,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
+namespace Classes\DB;
 require_once(__DIR__. '/dbglobal.php');
 
 class db_mysql implements DBMS
@@ -41,7 +41,7 @@ class db_mysql implements DBMS
 	
 	public function sql_connect()
 	{
-		$this->connection = new mysqli($this->_dbglobal->host,
+		$this->connection = new \mysqli($this->_dbglobal->host,
 										 		 $this->_dbglobal->user,
 										 		 $this->_dbglobal->pass,
 										 		 $this->_dbglobal->database,
