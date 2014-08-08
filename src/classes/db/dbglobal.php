@@ -24,45 +24,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+require_once(__DIR__ . "/../conf/conf.php");
 
-include_once(__DIR__ . "/../conf/conf.php");
+interface DBMS
+{
+	
+	public function sql_connect();
+	public function sql_disconnect();
+	public function sql_escape($escapestring);
+	public function sql_query($query);
+	public function sql_fetchfield($fieldname);
+	public function sql_isconnected();
 
-class mysqlconnection
+}
+
+class dbglobal
 {	
 
 
 	private $conf;
 	
-	private $host;
-	private $port;
-	private $user;
-	private $pass;
-	private $database;
-		
-	public $mysql_connection;
+	public $host;
+	public $port;
+	public $user;
+	public $pass;
+	public $database;
 	
 	public function __construct($config)
 	{
 		$this->conf             = $config;
+		
+		$GLOBALS['dbms']        = $this->conf->getKey('db_config','type');
 		
 		$this->host             = $this->conf->getKey('db_config','host');
 		$this->port             = $this->conf->getKey('db_config','port');
 		$this->user             = $this->conf->getKey('db_config','user');
 		$this->pass             = $this->conf->getKey('db_config','pass');
 		$this->database         = $this->conf->getKey('db_config','database');		
-		
-		$this->mysql_connection = new mysqli($this->host, $this->user, $this->pass, $this->database);		
-		
-		if(mysqli_connect_error())
-		{
-			die('Connect Error (' . mysqli_connect_errno() . ') '
-			                      . mysqli_connect_error());
-		}
 	}
 	
-	public function __destruct()
+	public function getDBMSClassName()
 	{
-		$this->mysql_connection->close();
+		return "db_" . $GLOBALS['dbms'];
 	}
 }
 
