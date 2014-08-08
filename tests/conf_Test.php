@@ -8,12 +8,12 @@ class conf_Test extends PHPUnit_Framework_TestCase
 {	
 	public function testsCanBeRead()
 	{
-		$conf  = new Conf(__DIR__ . "/config.ini");
+      $conf  = new Conf(__DIR__ . "/config.ini");
       $value = $conf->getKey("test","testKey");
 		
-		print("Value fetched: " . $value . PHP_EOL);
+      print("Value fetched: " . $value . PHP_EOL);
 	
-		$this->assertEquals("TestValue", $value);		
+      $this->assertEquals("TestValue", $value);		
 	}
 	
 	public function testsMainCanBeRead()
