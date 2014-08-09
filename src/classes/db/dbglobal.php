@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 namespace Classes\DB;
-require_once(__DIR__ . "/../conf/conf.php");
+require_once(__DIR__ . "/../../top.php");
 
 interface DBMS
 {
@@ -50,10 +50,9 @@ class dbglobal
 	public $pass;
 	public $database;
 	
-	public function __construct($config)
+	public function __construct()
 	{
-		$this->conf             = $config;
-		
+		$this->conf             = $GLOBALS['config'];
 		$GLOBALS['dbms']        = $this->conf->getKey('db_config','type');
 		
 		$this->host             = $this->conf->getKey('db_config','host');
