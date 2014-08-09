@@ -113,6 +113,7 @@ CREATE TABLE `content` (
 
 LOCK TABLES `content` WRITE;
 /*!40000 ALTER TABLE `content` DISABLE KEYS */;
+INSERT INTO `content` VALUES (1,'1.jpg',2),(2,'2.jpg',2),(3,'3.jpg',2),(4,'4.jpg',1),(5,'5.jpg',1),(6,'6.jpg',1),(7,'7.jpg',1),(8,'8.jpg',1);
 /*!40000 ALTER TABLE `content` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -136,7 +137,7 @@ CREATE TABLE `content_types` (
 
 LOCK TABLES `content_types` WRITE;
 /*!40000 ALTER TABLE `content_types` DISABLE KEYS */;
-INSERT INTO `content_types` VALUES (1,'Profile Logo'),(2,'Picture'),(3,'Movie');
+INSERT INTO `content_types` VALUES (1,'Profile Logo'),(2,'Team Logo'),(3,'Picture'),(4,'Movie');
 /*!40000 ALTER TABLE `content_types` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -218,6 +219,7 @@ CREATE TABLE `profiles` (
 
 LOCK TABLES `profiles` WRITE;
 /*!40000 ALTER TABLE `profiles` DISABLE KEYS */;
+INSERT INTO `profiles` VALUES (1,'Kayaba Akihiko','GM','gm@sao.com',1),(2,'Howard','Howie','howie@sweating.com',2),(3,'Roux','Angry Guy','roux@awesomeness.com',3),(4,'dude1','dude','dude@dude.com',4),(5,'dude2','dudett','dude2@dude.com',5);
 /*!40000 ALTER TABLE `profiles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -295,29 +297,57 @@ LOCK TABLES `skills` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `team_members`
+-- Table structure for table `team_content`
 --
 
-DROP TABLE IF EXISTS `team_members`;
+DROP TABLE IF EXISTS `team_content`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `team_members` (
+CREATE TABLE `team_content` (
   `team_id` int(11) NOT NULL,
-  `applicant_id` int(11) NOT NULL,
-  PRIMARY KEY (`team_id`),
-  KEY `fk_team_members_2_idx` (`applicant_id`),
-  CONSTRAINT `fk_team_members_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_team_members_2` FOREIGN KEY (`applicant_id`) REFERENCES `applicants` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `content_id` int(11) NOT NULL,
+  KEY `index1` (`team_id`),
+  KEY `fk_team_content_2_idx` (`content_id`),
+  CONSTRAINT `fk_team_content_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_team_content_2` FOREIGN KEY (`content_id`) REFERENCES `content` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `team_members`
+-- Dumping data for table `team_content`
 --
 
-LOCK TABLES `team_members` WRITE;
-/*!40000 ALTER TABLE `team_members` DISABLE KEYS */;
-/*!40000 ALTER TABLE `team_members` ENABLE KEYS */;
+LOCK TABLES `team_content` WRITE;
+/*!40000 ALTER TABLE `team_content` DISABLE KEYS */;
+INSERT INTO `team_content` VALUES (1,1),(2,2),(3,3);
+/*!40000 ALTER TABLE `team_content` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `team_profiles`
+--
+
+DROP TABLE IF EXISTS `team_profiles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `team_profiles` (
+  `team_id` int(11) NOT NULL,
+  `profile_id` int(11) NOT NULL,
+  KEY `index1` (`team_id`),
+  KEY `fk_team_profiles_2_idx` (`profile_id`),
+  CONSTRAINT `fk_team_profiles_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_team_profiles_2` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `team_profiles`
+--
+
+LOCK TABLES `team_profiles` WRITE;
+/*!40000 ALTER TABLE `team_profiles` DISABLE KEYS */;
+INSERT INTO `team_profiles` VALUES (1,2),(1,3),(2,4),(2,5);
+/*!40000 ALTER TABLE `team_profiles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -330,7 +360,7 @@ DROP TABLE IF EXISTS `teams`;
 CREATE TABLE `teams` (
   `id` int(11) NOT NULL,
   `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `logo` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `size` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -341,6 +371,7 @@ CREATE TABLE `teams` (
 
 LOCK TABLES `teams` WRITE;
 /*!40000 ALTER TABLE `teams` DISABLE KEYS */;
+INSERT INTO `teams` VALUES (1,'Team A',2),(2,'Team B',3),(3,'Team C',4);
 /*!40000 ALTER TABLE `teams` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -369,6 +400,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'admin','',1),(2,'howie@sweating.com','',1),(3,'roux@awesomeness.com','',1),(4,'dude@dude.com','',1),(5,'dude2@dude.com','',2);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -385,4 +417,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-09 16:00:26
+-- Dump completed on 2014-08-09 17:52:36
