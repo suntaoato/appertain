@@ -37,7 +37,7 @@ CREATE TABLE `account_status` (
 
 LOCK TABLES `account_status` WRITE;
 /*!40000 ALTER TABLE `account_status` DISABLE KEYS */;
-INSERT INTO `account_status` VALUES (1,'Active'),(2,'Disabled');
+INSERT INTO `account_status` VALUES (0,'Disabled'),(1,'Enabled');
 /*!40000 ALTER TABLE `account_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -401,9 +401,26 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin','',1),(2,'howie@sweating.com','',1),(3,'roux@awesomeness.com','',1),(4,'dude@dude.com','',1),(5,'dude2@dude.com','',2);
+INSERT INTO `users` VALUES (1,'admin','',1),(2,'howie@sweating.com','',1),(3,'roux@awesomeness.com','',1),(4,'dude@dude.com','',1),(5,'dude2@dude.com','',0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary table structure for view `vwDisabledProfiles`
+--
+
+DROP TABLE IF EXISTS `vwDisabledProfiles`;
+/*!50001 DROP VIEW IF EXISTS `vwDisabledProfiles`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwDisabledProfiles` (
+  `id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `handle` tinyint NOT NULL,
+  `email` tinyint NOT NULL,
+  `path` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Temporary table structure for view `vwEnabledProfiles`
@@ -423,8 +440,42 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary table structure for view `vwEnabledUsers`
+--
+
+DROP TABLE IF EXISTS `vwEnabledUsers`;
+/*!50001 DROP VIEW IF EXISTS `vwEnabledUsers`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwEnabledUsers` (
+  `id` tinyint NOT NULL,
+  `username` tinyint NOT NULL,
+  `password` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Dumping routines for database 'appertain'
 --
+
+--
+-- Final view structure for view `vwDisabledProfiles`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwDisabledProfiles`*/;
+/*!50001 DROP VIEW IF EXISTS `vwDisabledProfiles`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwDisabledProfiles` AS select `p`.`id` AS `id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`c`.`path` AS `path` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status` = 0) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
 -- Final view structure for view `vwEnabledProfiles`
@@ -444,6 +495,25 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vwEnabledUsers`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwEnabledUsers`*/;
+/*!50001 DROP VIEW IF EXISTS `vwEnabledUsers`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwEnabledUsers` AS select `u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`password` AS `password` from `users` `u` where (`u`.`status` = 1) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -454,4 +524,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-09 18:03:07
+-- Dump completed on 2014-08-09 18:45:00
