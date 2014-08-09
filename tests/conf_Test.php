@@ -30,5 +30,31 @@ class conf_Test extends PHPUnit_Framework_TestCase
 
 		$this->assertFalse(is_null($value));		 
 	}
+	
+	public function testsGibberishLocationFallback()
+	{
+		$conf  = new \Classes\Conf\conf("akjgakjhgaf");
+		$value =  $conf->getKey("db_config","host");
+      
+		print("Value fetched despite bad location: " 
+		. $value 
+		. PHP_EOL
+		);
+
+		$this->assertFalse(is_null($value));
+	}
+	
+	public function testsFileExistsButNotConfig()
+	{
+		$conf  = new \Classes\Conf\conf(__DIR__ . "/conf_Test.php");
+		$value =  $conf->getKey("db_config","host");
+      
+		print("Value fetched despite non-conformist file: " 
+		. $value 
+		. PHP_EOL
+		);
+
+		$this->assertFalse(is_null($value));
+	}
 }
 ?>
