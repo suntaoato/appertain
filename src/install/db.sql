@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `sorohopo` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */;
-USE `sorohopo`;
+CREATE DATABASE  IF NOT EXISTS `appertain` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */;
+USE `appertain`;
 -- MySQL dump 10.13  Distrib 5.5.38, for debian-linux-gnu (x86_64)
 --
--- Host: 127.0.0.1    Database: sorohopo
+-- Database: Appertain
 -- ------------------------------------------------------
 -- Server version	5.5.38-0ubuntu0.14.04.1
 
@@ -298,7 +298,7 @@ LOCK TABLES `users` WRITE;
 UNLOCK TABLES;
 
 --
--- Dumping routines for database 'sorohopo'
+-- Dumping routines for database 'appertain'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

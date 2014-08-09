@@ -31,7 +31,7 @@ class db_mysql implements DBMS
 	private $_dbglobal;
 	
 	private $connection;
-	private $lastresult;
+	public  $lastresult;
 		
 	
 	public function __construct($dbglobal)	
@@ -75,8 +75,15 @@ class db_mysql implements DBMS
 	{
 		if($this->sql_isconnected())
 		{
+			try
+			{
 			$this->lastresult = $this->connection->query($query);
 			return $this->lastresult;
+			}
+			catch(Exception $e)
+			{
+				print($e->getMessage());
+			}
 		}
 	}
 	
