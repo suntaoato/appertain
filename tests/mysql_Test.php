@@ -6,11 +6,13 @@ class mysql_Test extends PHPUnit_Framework_TestCase
 {	
 	public function testsCanConnect()
 	{
-		$dbglobal = new dbglobal(new conf(__DIR__ . "/config.ini"));
-		$dbname   = $dbglobal->getDBMSClassName();
+		$dbglobal = new \Classes\DB\dbglobal(new \Classes\Conf\conf(__DIR__ . "/config.ini"));
 		
-		require_once(__DIR__ . "/../src/classes/db/" . $dbname . ".php");
-		$dbms = new $dbname($dbglobal);		
+		
+		require_once(__DIR__ . "/../src/classes/db/" . $dbglobal->getDBMSClassName(false) . ".php");
+		
+		$dbnamens =	$dbglobal->getDBMSClassName(true);		
+		$dbms = new $dbnamens($dbglobal);		
 			
 		print
 		("SQL Connection Created: " 

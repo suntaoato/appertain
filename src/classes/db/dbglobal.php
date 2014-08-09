@@ -23,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
+namespace Classes\DB;
 require_once(__DIR__ . "/../conf/conf.php");
 
 interface DBMS
@@ -63,9 +63,16 @@ class dbglobal
 		$this->database         = $this->conf->getKey('db_config','database');		
 	}
 	
-	public function getDBMSClassName()
+	public function getDBMSClassName($withNS)
 	{
-		return "db_" . $GLOBALS['dbms'];
+		if($withNS)
+		{
+			return __NAMESPACE__ . "\db_" . $GLOBALS['dbms'];
+		}
+		else 
+		{
+			return "db_" . $GLOBALS['dbms'];
+		}
 	}
 }
 
