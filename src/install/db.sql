@@ -86,6 +86,7 @@ CREATE TABLE `approval` (
 
 LOCK TABLES `approval` WRITE;
 /*!40000 ALTER TABLE `approval` DISABLE KEYS */;
+INSERT INTO `approval` VALUES (0,'Pending'),(1,'Approved'),(2,'Declined');
 /*!40000 ALTER TABLE `approval` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,14 +99,11 @@ DROP TABLE IF EXISTS `content`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `content` (
   `id` int(11) NOT NULL,
-  `applicant_id` int(11) NOT NULL,
   `path` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `type` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_content_1_idx` (`applicant_id`),
   KEY `fk_content_2_idx` (`type`),
-  CONSTRAINT `fk_content_1` FOREIGN KEY (`applicant_id`) REFERENCES `applicants` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_content_2` FOREIGN KEY (`type`) REFERENCES `content_types` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_content_1` FOREIGN KEY (`type`) REFERENCES `content_types` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -138,7 +136,34 @@ CREATE TABLE `content_types` (
 
 LOCK TABLES `content_types` WRITE;
 /*!40000 ALTER TABLE `content_types` DISABLE KEYS */;
+INSERT INTO `content_types` VALUES (1,'Profile Logo'),(2,'Picture'),(3,'Movie');
 /*!40000 ALTER TABLE `content_types` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `profile_content`
+--
+
+DROP TABLE IF EXISTS `profile_content`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `profile_content` (
+  `profile_id` int(11) NOT NULL,
+  `content_id` int(11) NOT NULL,
+  KEY `index1` (`profile_id`),
+  KEY `fk_profile_content_2_idx` (`content_id`),
+  CONSTRAINT `fk_profile_content_1` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_profile_content_2` FOREIGN KEY (`content_id`) REFERENCES `content` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `profile_content`
+--
+
+LOCK TABLES `profile_content` WRITE;
+/*!40000 ALTER TABLE `profile_content` DISABLE KEYS */;
+/*!40000 ALTER TABLE `profile_content` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -360,4 +385,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-09 15:34:55
+-- Dump completed on 2014-08-09 16:00:26
