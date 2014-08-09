@@ -34,9 +34,26 @@ class conf
 	
 	public function __construct($filename)
 	{
-		$this->_filename          = $filename;
+		//Runs a series of checks and falls back to default location if one supplied
+		//Is useless.
+		if(file_exists($filename))
+		{
+			$this->_filename          = $filename;
+		}
+		else 
+		{
+			$this->_filename          = __DIR__ . "/../../config.ini";  
+		}
+		
+		if(pathinfo($this->_filename, PATHINFO_EXTENSION) != 'ini')
+		{
+			$this->_filename          = __DIR__ . "/../../config.ini"; 
+		}
+		
 		$this->_process_sections  = true;
 		$this->_config            = parse_ini_file($this->_filename, $this->_process_sections);
+		
+		$GLOBAL['config'] = $this;
 	}
 
 	public function getKey($section, $key)
