@@ -11,5 +11,10 @@ if(!array_key_exists('config', $GLOBALS))
 if(!array_key_exists('dbms', $GLOBALS))
 {
 	$db = new \Classes\DB\dbglobal($GLOBALS['config']);
+	$dbnsname = $db->getDBMSClassName(true);
+
+	include_once(__DIR__ . "/classes/db/" . $db->getDBMSClassName(false) . ".php");	
+	
+	$GLOBALS['dbms'] = new $dbnsname($db);
 }
 ?>
