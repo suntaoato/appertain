@@ -2,7 +2,7 @@ CREATE DATABASE  IF NOT EXISTS `appertain` /*!40100 DEFAULT CHARACTER SET utf8 C
 USE `appertain`;
 -- MySQL dump 10.13  Distrib 5.5.38, for debian-linux-gnu (x86_64)
 --
--- Database: Appertain
+-- Host: 127.0.0.1    Database: appertain
 -- ------------------------------------------------------
 -- Server version	5.5.38-0ubuntu0.14.04.1
 
@@ -18,60 +18,52 @@ USE `appertain`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `applicant_skills`
+-- Table structure for table `account_status`
 --
 
-DROP TABLE IF EXISTS `applicant_skills`;
+DROP TABLE IF EXISTS `account_status`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `applicant_skills` (
-  `applicant_id` int(11) NOT NULL,
-  `skill_id` int(11) NOT NULL,
-  PRIMARY KEY (`applicant_id`),
-  KEY `fk_applicant_skills_2_idx` (`skill_id`),
-  CONSTRAINT `fk_applicant_skills_1` FOREIGN KEY (`applicant_id`) REFERENCES `applicants` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_applicant_skills_2` FOREIGN KEY (`skill_id`) REFERENCES `skills` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+CREATE TABLE `account_status` (
+  `id` tinyint(4) NOT NULL,
+  `description` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `applicant_skills`
+-- Dumping data for table `account_status`
 --
 
-LOCK TABLES `applicant_skills` WRITE;
-/*!40000 ALTER TABLE `applicant_skills` DISABLE KEYS */;
-/*!40000 ALTER TABLE `applicant_skills` ENABLE KEYS */;
+LOCK TABLES `account_status` WRITE;
+/*!40000 ALTER TABLE `account_status` DISABLE KEYS */;
+INSERT INTO `account_status` VALUES (1,'Active'),(2,'Disabled');
+/*!40000 ALTER TABLE `account_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `applicants`
+-- Table structure for table `applications`
 --
 
-DROP TABLE IF EXISTS `applicants`;
+DROP TABLE IF EXISTS `applications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `applicants` (
+CREATE TABLE `applications` (
   `id` int(11) NOT NULL,
-  `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `title` varchar(5) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `logo` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `description` varchar(300) COLLATE utf8_unicode_ci NOT NULL,
-  `rating` tinyint(4) DEFAULT NULL,
-  `user_id` int(11) NOT NULL,
+  `rating` tinyint(4) NOT NULL DEFAULT '0',
   `approval_id` tinyint(4) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_applicants_1_idx` (`user_id`),
-  CONSTRAINT `fk_applicants_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `applicants`
+-- Dumping data for table `applications`
 --
 
-LOCK TABLES `applicants` WRITE;
-/*!40000 ALTER TABLE `applicants` DISABLE KEYS */;
-/*!40000 ALTER TABLE `applicants` ENABLE KEYS */;
+LOCK TABLES `applications` WRITE;
+/*!40000 ALTER TABLE `applications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `applications` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -147,6 +139,61 @@ CREATE TABLE `content_types` (
 LOCK TABLES `content_types` WRITE;
 /*!40000 ALTER TABLE `content_types` DISABLE KEYS */;
 /*!40000 ALTER TABLE `content_types` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `profile_skills`
+--
+
+DROP TABLE IF EXISTS `profile_skills`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `profile_skills` (
+  `profile_id` int(11) NOT NULL,
+  `skill_id` int(11) NOT NULL,
+  KEY `index1` (`profile_id`),
+  KEY `fk_profile_skills_2_idx` (`skill_id`),
+  CONSTRAINT `fk_profile_skills_1` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_profile_skills_2` FOREIGN KEY (`skill_id`) REFERENCES `skills` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `profile_skills`
+--
+
+LOCK TABLES `profile_skills` WRITE;
+/*!40000 ALTER TABLE `profile_skills` DISABLE KEYS */;
+/*!40000 ALTER TABLE `profile_skills` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `profiles`
+--
+
+DROP TABLE IF EXISTS `profiles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `profiles` (
+  `id` int(11) NOT NULL,
+  `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `handle` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
+  KEY `fk_profile_1_idx` (`user_id`),
+  CONSTRAINT `fk_profile_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `profiles`
+--
+
+LOCK TABLES `profiles` WRITE;
+/*!40000 ALTER TABLE `profiles` DISABLE KEYS */;
+/*!40000 ALTER TABLE `profiles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -284,7 +331,10 @@ CREATE TABLE `users` (
   `username` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   `status` tinyint(4) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username_UNIQUE` (`username`),
+  KEY `fk_users_1` (`status`),
+  CONSTRAINT `fk_users_1` FOREIGN KEY (`status`) REFERENCES `account_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -310,4 +360,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-09 13:20:37
+-- Dump completed on 2014-08-09 15:34:55
