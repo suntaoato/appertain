@@ -23,16 +23,71 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace Classes\Core
+namespace Classes\Core;
 require_once(__DIR__ . '/../../top.php');
 
-public $username; //As they will be known in the hackathon, probably best renaming to Nickname?
-public $email;
-public $forename;
-public $surname;
-public $profilepic; //Stored as BLOB
-public $prevwork //Stored as an array of BLOBs
+class user
+{
+	private $encpassword;	
+	
+	public  $userid;
+	public  $username;
+	public  $isAuth = false;
 
+	public function __construct($username, $password)
+	{	
+		$this->username    = $username;
+		$this->encpassword = crypt($password,"you_have_died_of_dysentry");
+				
+		$this->fetchUser();
+		
+		return;
+	}
 
+	public function fetchUser()
+	{
+		$GLOBALS['dbms']->sql_connect();
+		
+		$prepare = $GLOBALS['dbms']->connection->prepare("SELECT id, username FROM vwEnabledUsers WHERE username=? AND password=?");
+		
+		if(!$prepare)
+		{
+			error_log("Prepare failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+		}	
+		
+		if(!$prepare->bind_param("ss", $this->username, $this->encpassword))
+		{
+			error_log("Binding parameters failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+		}
+		
+		if(!$prepare->execute())
+		{
+			error_log("Execute failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+		}
+		
+		$brID = NULL;
+		$brUsername = NULL;
+		
+		if(!$prepare->bind_result($brID, $brUsername))
+		{
+			 error_log("Binding output parameters failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+		}	
+		
+		$prepare->fetch();
+		$prepare->close();
+				
+		if(!is_null($brID) && !is_null($brUsername))
+		{
+			$this->userid      = $brID;
+			$this->username    = $brUsername;
+			$this->isAuth      = true;
+			
+			return true;
+		}
+			
 
+		
+		return false;
+	}
+}
 ?>
