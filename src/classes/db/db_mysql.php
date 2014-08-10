@@ -29,8 +29,8 @@ require_once(__DIR__. '/dbglobal.php');
 class db_mysql implements DBMS
 {
 	private $_dbglobal;
-	
-	private $connection;
+	public  $connection;
+
 	public  $lastresult;
 		
 	
@@ -49,6 +49,7 @@ class db_mysql implements DBMS
 										 
 		if(mysqli_connect_errno());
 		{
+			error_log(mysqli_connect_error());
 			return false;
 		}
 		
@@ -110,6 +111,14 @@ class db_mysql implements DBMS
 		}
 		
 		return false;
+	}
+
+	public function sql_prepare($prepare)
+	{
+		if($this->sql_isconnected())
+		{
+			return $this->connection->prepare($prepare);
+		}
 	}
 }
 
