@@ -30,7 +30,7 @@ class db_mysql implements DBMS
 {
 	private $_dbglobal;
 	public  $connection;
-	
+
 	public  $lastresult;
 		
 	
@@ -112,7 +112,7 @@ class db_mysql implements DBMS
 		
 		return false;
 	}
-	
+
 	public function sql_prepare($prepare)
 	{
 		if($this->sql_isconnected())
@@ -120,7 +120,6 @@ class db_mysql implements DBMS
 			return $this->connection->prepare($prepare);
 		}
 	}
-	
 }
 
 ?>

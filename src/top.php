@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 //CHECK FOR THE EXISTENCE OF CONFIG.
@@ -20,8 +19,6 @@ if(!array_key_exists('dbms', $GLOBALS))
 	
 	$GLOBALS['dbms'] = new $dbnsname($db);
 }
-
-unset($GLOBALS['theme']);
 
 if(!array_key_exists('theme', $GLOBALS))
 {

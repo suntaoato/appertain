@@ -52,6 +52,8 @@ class conf
 		
 		$this->_process_sections  = true;
 		$this->_config            = parse_ini_file($this->_filename, $this->_process_sections);
+		
+		$GLOBAL['config'] = $this;
 	}
 
 	public function getKey($section, $key)
