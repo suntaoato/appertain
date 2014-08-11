@@ -498,6 +498,75 @@ SET character_set_client = @saved_cs_client;
 --
 -- Dumping routines for database 'appertain'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `spRegister` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spRegister`( IN username VARCHAR(60),
+						IN password VARCHAR(45),
+						IN fullname VARCHAR(45),
+						IN handle VARCHAR(45),
+						IN email VARCHAR(45),
+						IN contentpath VARCHAR(100),
+						IN skills TEXT,
+						OUT result INT
+					)
+BEGIN
+  DECLARE count INT;
+  DECLARE skillid TEXT;
+  DECLARE userid INT;
+  DECLARE profileid INT;
+  INSERT INTO users(username, password, status) VALUES(username, password, 1);
+  SET userid = LAST_INSERT_ID();
+  INSERT INTO profiles(name, handle, email, user_id) VALUES(fullname, handle, email, userid);
+  SET profileid = LAST_INSERT_ID();
+  INSERT INTO content(path, type) VALUES(contentpath, 1);
+  INSERT INTO profile_content(profile_id, content_id) VALUES(profileid, LAST_INSERT_ID());
+  call spSetSkills(profileid, skills);
+  SELECT COUNT(u.id) INTO count FROM users u WHERE id=userid;
+  IF count = 1 THEN
+	SET result = userid;
+  ELSE
+	SET result = 0;
+  END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spSetSkills` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spSetSkills`(in profileid int, IN skills TEXT)
+BEGIN
+  DECLARE skillid text;
+  DELETE FROM profile_skills WHERE profile_id = profileid;
+  WHILE skills != '' DO
+    SET skillid = SUBSTRING_INDEX(skills, '|', 1);
+    INSERT INTO profile_skills(profile_id, skill_id) VALUES(profileid, skillid);
+    SET skills = SUBSTRING(skills, CHAR_LENGTH(skillid) + 2);
+END WHILE;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Final view structure for view `vwApprovedApplications`
@@ -603,4 +672,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-11 22:31:01
+-- Dump completed on 2014-08-12  0:20:07
