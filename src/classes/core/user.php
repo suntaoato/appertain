@@ -33,15 +33,28 @@ class user
 	public  $userid;
 	public  $username;
 	public  $isAuth = false;
+	public  $created = false;
 
-	public function __construct($username, $password)
+	public function __construct($username, $password, $create = false, $details = NULL)
 	{	
 		$this->username    = $username;
-		$this->encpassword = crypt($password,"you_have_died_of_dysentry");
-				
-		$this->fetchUser();
+		$this->encpassword = encryptPassword($password);
 		
-		return;
+		if(!$create)
+		{		
+			$this->fetchUser();
+			return;
+		}
+		else 
+		{
+			if($this->createUser());
+			{
+				new profile($this->userid, true, $details);
+				$this->created = true;
+				
+				return;
+			}
+		}
 	}
 
 	public function fetchUser()
@@ -85,9 +98,82 @@ class user
 			return true;
 		}
 			
-
+		return false;
+	}
+	
+	public function createUser()
+	{
+		if(!isDuplicate($this->username))
+		{
+			$GLOBALS['dbms']->sql_connect();
+			
+			$prepare = $GLOBALS['dbms']->connection->prepare("INSERT INTO  user (username, password) VALUES (?,?)");
+			
+			if(!$prepare)
+			{
+				error_log("Prepare failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+			}	
+		
+			if(!$prepare->bind_param("ss", $this->username, $this->encpassword))
+			{
+				error_log("Binding parameters failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+			}
+		
+			if(!$prepare->execute())
+			{
+				error_log("Execute failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+			}
+			
+			$this->userid = $GLOBALS['dbms']->sql_lastid();
+			
+			return true;	
+		}
 		
 		return false;
+	}
+	
+	public static function isDuplicate($username)
+	{
+		$GLOBALS['dbms']->sql_connect();
+		
+		$prepare = $GLOBALS['dbms']->connection->prepare("SELECT id FROM users WHERE username=?");
+		
+		if(!$prepare)
+		{
+			error_log("Prepare failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+		}	
+		
+		if(!$prepare->bind_param("s", $username))
+		{
+			error_log("Binding parameters failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+		}
+		
+		if(!$prepare->execute())
+		{
+			error_log("Execute failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+		}
+		
+		$brUsername = NULL;
+		
+		if(!$prepare->bind_result($brUsername))
+		{
+			 error_log("Binding output parameters failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+		}	
+		
+		$prepare->fetch();
+		$prepare->close();
+		
+		if(!is_null($brUsername))
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private function encryptPassword($password)
+	{
+		return crypt($password,"you_have_died_of_dysentry");
 	}
 }
 ?>
