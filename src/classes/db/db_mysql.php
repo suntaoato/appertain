@@ -120,6 +120,11 @@ class db_mysql implements DBMS
 			return $this->connection->prepare($prepare);
 		}
 	}
+	
+	public function sql_lastid()
+	{
+		return $this->connection->insert_id;		
+	}
 }
 
 ?>

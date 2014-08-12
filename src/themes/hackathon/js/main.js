@@ -1,18 +1,15 @@
 $(function(){
 
 $(".avatar").css({
-"background-image": "url(../hackathon/img/anonface.png)"
+"background-image": "url(../hackathon/img/anonface.jpg)"
 });	
 	
 var username  = $("input[name=user]");
 var password  = $("input[name=password]");
 
             $('button[type="submit"]').click(function(e) {
-                e.preventDefault();
-
                 //little validation just to check username
                 if (username.val() != "" && password.val() != "") {
-							
 							$.ajax({
 								type: "POST",
 								url:  "../../modules/login/login.php",
@@ -54,10 +51,6 @@ var password  = $("input[name=password]");
 									}
 								}
 							});
-                } else {
-                    //remove success message replaced with error message
-                    $("#output").removeClass(' alert alert-success');
-                    $("#output").addClass("alert alert-danger animated fadeInUp").html("username / password cannot be blank.");
                 }
             });
 });

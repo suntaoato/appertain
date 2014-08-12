@@ -29,19 +29,37 @@ require_once(__DIR__ . '/../../top.php');
 class profile
 {
 	private $profileid;
-	private $userid;	
+	private $userid;		
 	
 	public  $picurl;
 	public  $forename;
 	public  $surname;
 	public  $email;
 	public  $nick;
+	public  $created;
 	
-	public function __construct($userid)
+	public function __construct($userid, $create = false, $details = NULL)
 	{
 		$this->userid = $userid;
 		
+		if(!$create)
+		{
+			fetchProfile();
+		}
+		else
+		{
+			$this->forename = $details['forename'];
+			$this->surname  = $details['surname'];
+			$this->email    = $details['email'];
+			$this->nick     = $details['nick'];
+			
+			if(createProfile())
+			{
+				$this->created = true;
+			}
+		}
 		
+		return;
 	}
 	
 	public function fetchProfile()
@@ -92,5 +110,39 @@ class profile
 
 		
 		return false;
+	}
+	
+	public function createProfile()
+	{
+			$GLOBALS['dbms']->sql_connect();
+			
+			$prepare = $GLOBALS['dbms']->connection->prepare("INSERT INTO profile (`name`, handle, email) VALUES (?,?,?)");
+			
+			if(!$prepare)
+			{
+				error_log("Prepare failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+			}	
+		
+			if(!$prepare->bind_param("sss", $this->getName, $this->nick, $this->email))
+			{
+				error_log("Binding parameters failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+			}
+		
+			if(!$prepare->execute())
+			{
+				error_log("Execute failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
+			}
+			
+			$this->profileid = $GLOBALS['dbms']->sql_lastid();
+			
+			return true;	
+		}
+		
+		return false;		
+	}
+	
+	public function getName()
+	{
+		return $this->forename . " " . $this->surname;
 	}
 }

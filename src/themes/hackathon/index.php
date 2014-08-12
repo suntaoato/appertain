@@ -6,7 +6,7 @@
 <title>Login :: Hackathon</title>
 <meta name="generator" content="Bluefish 2.2.5" >
 <meta name="author" content="root" >
-<meta name="date" content="2014-08-09T21:23:21+0200" >
+<meta name="date" content="2014-08-13T01:33:33+0200" >
 <meta name="copyright" content="Dreamhack">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -42,12 +42,12 @@
             
             <div class="form-box">
                 <form action="./" method="POST">
-                    <input name="user" type="text" placeholder="Username">
-                    <input name="password" type="password" placeholder="Password">
+                    <input class="form-control" name="user" type="email" placeholder="Username" required>
+                    <input class="form-control" name="password" type="password" placeholder="Password" required>
+                    <span class="label">Not a user? Click here to register</span>
                     <button class="btn btn-warning btn-block login" type="submit">Login</button>
                 </form>
             </div>
-            
         </div>
         
 </div>
