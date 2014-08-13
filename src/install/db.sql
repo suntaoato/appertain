@@ -42,6 +42,32 @@ INSERT INTO `account_status` VALUES (0,'Disabled'),(1,'Enabled');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `application_event`
+--
+
+DROP TABLE IF EXISTS `application_event`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `application_event` (
+  `application_id` int(11) NOT NULL,
+  `event_id` int(11) NOT NULL,
+  KEY `fk_application_event_1_idx` (`application_id`),
+  KEY `fk_application_event_2_idx` (`event_id`),
+  CONSTRAINT `fk_application_event_1` FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_application_event_2` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `application_event`
+--
+
+LOCK TABLES `application_event` WRITE;
+/*!40000 ALTER TABLE `application_event` DISABLE KEYS */;
+/*!40000 ALTER TABLE `application_event` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `applications`
 --
 
@@ -146,6 +172,57 @@ INSERT INTO `content_types` VALUES (1,'Profile Logo'),(2,'Team Logo'),(3,'Pictur
 UNLOCK TABLES;
 
 --
+-- Table structure for table `event_members`
+--
+
+DROP TABLE IF EXISTS `event_members`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_members` (
+  `event_id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  KEY `fk_project_members_2_idx` (`application_id`),
+  KEY `fk_event_members_1_idx` (`event_id`),
+  CONSTRAINT `fk_event_members_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_event_members_2` FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `event_members`
+--
+
+LOCK TABLES `event_members` WRITE;
+/*!40000 ALTER TABLE `event_members` DISABLE KEYS */;
+/*!40000 ALTER TABLE `event_members` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `events`
+--
+
+DROP TABLE IF EXISTS `events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `size` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `events`
+--
+
+LOCK TABLES `events` WRITE;
+/*!40000 ALTER TABLE `events` DISABLE KEYS */;
+INSERT INTO `events` VALUES (1,'Hackathon',40);
+/*!40000 ALTER TABLE `events` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `profile_content`
 --
 
@@ -228,56 +305,6 @@ LOCK TABLES `profiles` WRITE;
 /*!40000 ALTER TABLE `profiles` DISABLE KEYS */;
 INSERT INTO `profiles` VALUES (1,'Kayaba Akihiko','GM','gm@sao.com',1,''),(2,'Howard','Howie','howie@sweating.com',2,''),(3,'Roux','Angry Guy','roux@awesomeness.com',3,''),(4,'dude1','dude','dude@dude.com',4,''),(5,'dude2','dudett','dude2@dude.com',5,'');
 /*!40000 ALTER TABLE `profiles` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `project_members`
---
-
-DROP TABLE IF EXISTS `project_members`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `project_members` (
-  `project_id` int(11) NOT NULL,
-  `applicant_id` int(11) NOT NULL,
-  PRIMARY KEY (`project_id`),
-  KEY `fk_project_members_2_idx` (`applicant_id`),
-  CONSTRAINT `fk_project_members_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_project_members_2` FOREIGN KEY (`applicant_id`) REFERENCES `applicants` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `project_members`
---
-
-LOCK TABLES `project_members` WRITE;
-/*!40000 ALTER TABLE `project_members` DISABLE KEYS */;
-/*!40000 ALTER TABLE `project_members` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `projects`
---
-
-DROP TABLE IF EXISTS `projects`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `projects` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `logo` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `projects`
---
-
-LOCK TABLES `projects` WRITE;
-/*!40000 ALTER TABLE `projects` DISABLE KEYS */;
-/*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -580,7 +607,7 @@ SET character_set_client = @saved_cs_client;
 --
 -- Dumping routines for database 'appertain'
 --
-/*!50003 DROP PROCEDURE IF EXISTS `spRegister` */;
+/*!50003 DROP PROCEDURE IF EXISTS `spExportEnabledProfiles` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -590,7 +617,50 @@ SET character_set_client = @saved_cs_client;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spRegister`( IN username VARCHAR(60),
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spExportEnabledProfiles`()
+BEGIN
+  SET @query = "SELECT * FROM vwEnabledProfiles";
+  call spExportToFile(@query, "/tmp/EnabledProfiles", "	");
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spExportToFile` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spExportToFile`(IN select_query TEXT, IN filepath VARCHAR(45), IN delimchar VARCHAR(1))
+BEGIN
+  SET @timestamp = DATE_FORMAT(NOW(),'_%Y_%m_%d_%H_%i_%s');
+  SET @CMD = CONCAT(select_query, " INTO OUTFILE '", filepath, @timestamp, "' FIELDS ENCLOSED BY '\"' TERMINATED BY '", 
+		delimchar, "' ESCAPED BY '\"' LINES TERMINATED BY '\r\n';");
+  PREPARE statement FROM @CMD;
+  EXECUTE statement;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spNewApplication` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spNewApplication`( IN username VARCHAR(60),
 						IN password VARCHAR(150),
 						IN fullname VARCHAR(45),
 						IN handle VARCHAR(45),
@@ -598,6 +668,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spRegister`( IN username VARCHAR(60
 						IN contentpath VARCHAR(100),
 						IN title VARCHAR(45),
 						IN skills TEXT,
+						IN eventlist TEXT,
+						IN description VARCHAR(300),
 						OUT result INT
 					)
 BEGIN
@@ -617,9 +689,81 @@ BEGIN
   SET profileid = LAST_INSERT_ID();
   INSERT INTO content(path, type) VALUES(contentpath, 1);
   INSERT INTO profile_content(profile_id, content_id) VALUES(profileid, LAST_INSERT_ID());
-  call spSetSkills(profileid, skills);
-  COMMIT;
+  CALL spSetSkills(profileid, skills);
+  INSERT INTO applications(description, rating, approval_id, profile_id) VALUES(description, 0, 0, profileid);
+  CALL spSetApplicationEvents(LAST_INSERT_ID(), eventlist);
   SET result = userid;
+  COMMIT;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spNewProfile` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spNewProfile`(IN username VARCHAR(60),
+						IN password VARCHAR(150),
+						IN fullname VARCHAR(45),
+						IN handle VARCHAR(45),
+						IN email VARCHAR(45),
+						IN contentpath VARCHAR(100),
+						IN title VARCHAR(45),
+						IN skills TEXT,
+						OUT result INT)
+BEGIN
+  DECLARE count INT;
+  DECLARE skillid TEXT;
+  DECLARE userid INT;
+  DECLARE profileid INT;
+  DECLARE exit handler for sqlexception
+  BEGIN
+    SET result = 0;
+    ROLLBACK;
+  END;
+  START TRANSACTION;
+  INSERT INTO users(username, password, status) VALUES(username, password, 1);
+  SET userid = LAST_INSERT_ID();
+  INSERT INTO profiles(name, handle, email, user_id, title) VALUES(fullname, handle, email, userid, title);
+  SET profileid = LAST_INSERT_ID();
+  INSERT INTO content(path, type) VALUES(contentpath, 1);
+  INSERT INTO profile_content(profile_id, content_id) VALUES(profileid, LAST_INSERT_ID());
+  CALL spSetSkills(profileid, skills);
+  SET result = userid;
+  COMMIT;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spSetApplicationEvents` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spSetApplicationEvents`(IN applicationid INT, IN eventlist TEXT)
+BEGIN
+  DECLARE eventid text;
+  DELETE FROM application_event WHERE application_id = applicationid;
+  WHILE eventlist != '' DO
+    SET eventid = SUBSTRING_INDEX(eventlist, '|', 1);
+    INSERT INTO application_event(application_id, event_id) VALUES(applicationid, eventid);
+    SET eventlist = SUBSTRING(eventlist, CHAR_LENGTH(eventid) + 2);
+END WHILE;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -655,7 +799,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spSetSkills`(in profileid int, IN skills TEXT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spSetSkills`(IN profileid INT, IN skills TEXT)
 BEGIN
   DECLARE skillid text;
   DELETE FROM profile_skills WHERE profile_id = profileid;
@@ -871,4 +1015,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-13 20:10:04
+-- Dump completed on 2014-08-13 21:28:15
