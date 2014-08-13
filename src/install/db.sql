@@ -195,6 +195,7 @@ CREATE TABLE `profile_skills` (
 
 LOCK TABLES `profile_skills` WRITE;
 /*!40000 ALTER TABLE `profile_skills` DISABLE KEYS */;
+INSERT INTO `profile_skills` VALUES (1,1),(3,1),(4,1),(5,1),(2,2),(2,3);
 /*!40000 ALTER TABLE `profile_skills` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -428,6 +429,20 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary table structure for view `vwContentTypes`
+--
+
+DROP TABLE IF EXISTS `vwContentTypes`;
+/*!50001 DROP VIEW IF EXISTS `vwContentTypes`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwContentTypes` (
+  `id` tinyint NOT NULL,
+  `name` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Temporary table structure for view `vwDisabledProfiles`
 --
 
@@ -475,6 +490,35 @@ SET character_set_client = utf8;
   `id` tinyint NOT NULL,
   `username` tinyint NOT NULL,
   `password` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `vwProfileSkills`
+--
+
+DROP TABLE IF EXISTS `vwProfileSkills`;
+/*!50001 DROP VIEW IF EXISTS `vwProfileSkills`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwProfileSkills` (
+  `profile_id` tinyint NOT NULL,
+  `skill_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `vwSkills`
+--
+
+DROP TABLE IF EXISTS `vwSkills`;
+/*!50001 DROP VIEW IF EXISTS `vwSkills`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwSkills` (
+  `id` tinyint NOT NULL,
+  `name` tinyint NOT NULL
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
@@ -588,6 +632,25 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `vwContentTypes`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwContentTypes`*/;
+/*!50001 DROP VIEW IF EXISTS `vwContentTypes`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwContentTypes` AS select `ct`.`id` AS `id`,`ct`.`name` AS `name` from `content_types` `ct` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `vwDisabledProfiles`
 --
 
@@ -645,6 +708,44 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `vwProfileSkills`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwProfileSkills`*/;
+/*!50001 DROP VIEW IF EXISTS `vwProfileSkills`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwProfileSkills` AS select `p`.`id` AS `profile_id`,`s`.`id` AS `skill_id`,`s`.`name` AS `name` from ((`profiles` `p` join `profile_skills` `ps`) join `skills` `s`) where ((`p`.`id` = `ps`.`profile_id`) and (`s`.`id` = `ps`.`skill_id`)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vwSkills`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwSkills`*/;
+/*!50001 DROP VIEW IF EXISTS `vwSkills`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwSkills` AS select `s`.`id` AS `id`,`s`.`name` AS `name` from `skills` `s` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `vwUnapprovedApplications`
 --
 
@@ -672,4 +773,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-12  0:20:07
+-- Dump completed on 2014-08-13 18:11:03
