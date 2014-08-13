@@ -566,6 +566,12 @@ BEGIN
   DECLARE skillid TEXT;
   DECLARE userid INT;
   DECLARE profileid INT;
+  DECLARE exit handler for sqlexception
+  BEGIN
+    SET result = 0;
+    ROLLBACK;
+  END;
+  START TRANSACTION;
   INSERT INTO users(username, password, status) VALUES(username, password, 1);
   SET userid = LAST_INSERT_ID();
   INSERT INTO profiles(name, handle, email, user_id) VALUES(fullname, handle, email, userid);
@@ -573,12 +579,8 @@ BEGIN
   INSERT INTO content(path, type) VALUES(contentpath, 1);
   INSERT INTO profile_content(profile_id, content_id) VALUES(profileid, LAST_INSERT_ID());
   call spSetSkills(profileid, skills);
-  SELECT COUNT(u.id) INTO count FROM users u WHERE id=userid;
-  IF count = 1 THEN
-	SET result = userid;
-  ELSE
-	SET result = 0;
-  END IF;
+  COMMIT;
+  SET result = userid;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -773,4 +775,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-13 18:11:03
+-- Dump completed on 2014-08-13 18:57:27
