@@ -212,6 +212,7 @@ CREATE TABLE `profiles` (
   `handle` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   `user_id` int(11) NOT NULL,
+  `title` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   KEY `fk_profile_1_idx` (`user_id`),
@@ -225,7 +226,7 @@ CREATE TABLE `profiles` (
 
 LOCK TABLES `profiles` WRITE;
 /*!40000 ALTER TABLE `profiles` DISABLE KEYS */;
-INSERT INTO `profiles` VALUES (1,'Kayaba Akihiko','GM','gm@sao.com',1),(2,'Howard','Howie','howie@sweating.com',2),(3,'Roux','Angry Guy','roux@awesomeness.com',3),(4,'dude1','dude','dude@dude.com',4),(5,'dude2','dudett','dude2@dude.com',5);
+INSERT INTO `profiles` VALUES (1,'Kayaba Akihiko','GM','gm@sao.com',1,''),(2,'Howard','Howie','howie@sweating.com',2,''),(3,'Roux','Angry Guy','roux@awesomeness.com',3,''),(4,'dude1','dude','dude@dude.com',4,''),(5,'dude2','dudett','dude2@dude.com',5,'');
 /*!40000 ALTER TABLE `profiles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -456,6 +457,7 @@ SET character_set_client = utf8;
   `name` tinyint NOT NULL,
   `handle` tinyint NOT NULL,
   `email` tinyint NOT NULL,
+  `title` tinyint NOT NULL,
   `path` tinyint NOT NULL
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
@@ -474,6 +476,7 @@ SET character_set_client = utf8;
   `name` tinyint NOT NULL,
   `handle` tinyint NOT NULL,
   `email` tinyint NOT NULL,
+  `title` tinyint NOT NULL,
   `path` tinyint NOT NULL
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
@@ -505,6 +508,25 @@ SET character_set_client = utf8;
   `profile_id` tinyint NOT NULL,
   `skill_id` tinyint NOT NULL,
   `name` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `vwProfiles`
+--
+
+DROP TABLE IF EXISTS `vwProfiles`;
+/*!50001 DROP VIEW IF EXISTS `vwProfiles`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwProfiles` (
+  `id` tinyint NOT NULL,
+  `user_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `handle` tinyint NOT NULL,
+  `email` tinyint NOT NULL,
+  `title` tinyint NOT NULL,
+  `path` tinyint NOT NULL
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
@@ -558,6 +580,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spRegister`( IN username VARCHAR(60
 						IN handle VARCHAR(45),
 						IN email VARCHAR(45),
 						IN contentpath VARCHAR(100),
+						IN title VARCHAR(45),
 						IN skills TEXT,
 						OUT result INT
 					)
@@ -574,7 +597,7 @@ BEGIN
   START TRANSACTION;
   INSERT INTO users(username, password, status) VALUES(username, password, 1);
   SET userid = LAST_INSERT_ID();
-  INSERT INTO profiles(name, handle, email, user_id) VALUES(fullname, handle, email, userid);
+  INSERT INTO profiles(name, handle, email, user_id, title) VALUES(fullname, handle, email, userid, title);
   SET profileid = LAST_INSERT_ID();
   INSERT INTO content(path, type) VALUES(contentpath, 1);
   INSERT INTO profile_content(profile_id, content_id) VALUES(profileid, LAST_INSERT_ID());
@@ -666,7 +689,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vwDisabledProfiles` AS select `u`.`id` AS `user_id`,`p`.`id` AS `id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`c`.`path` AS `path` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status` = 0) */;
+/*!50001 VIEW `vwDisabledProfiles` AS select `u`.`id` AS `user_id`,`p`.`id` AS `id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `path` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status` = 0) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -685,7 +708,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vwEnabledProfiles` AS select `p`.`id` AS `id`,`u`.`id` AS `user_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`c`.`path` AS `path` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status` = 1) */;
+/*!50001 VIEW `vwEnabledProfiles` AS select `p`.`id` AS `id`,`u`.`id` AS `user_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `path` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status` = 1) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -724,6 +747,25 @@ DELIMITER ;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `vwProfileSkills` AS select `p`.`id` AS `profile_id`,`s`.`id` AS `skill_id`,`s`.`name` AS `name` from ((`profiles` `p` join `profile_skills` `ps`) join `skills` `s`) where ((`p`.`id` = `ps`.`profile_id`) and (`s`.`id` = `ps`.`skill_id`)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vwProfiles`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwProfiles`*/;
+/*!50001 DROP VIEW IF EXISTS `vwProfiles`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwProfiles` AS select `p`.`id` AS `id`,`p`.`user_id` AS `user_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `path` from ((`profiles` `p` join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -775,4 +817,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-13 18:57:27
+-- Dump completed on 2014-08-13 19:27:54
