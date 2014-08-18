@@ -184,7 +184,10 @@ CREATE TABLE `events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   `size` tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  `status_id` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `fk_events_1_idx` (`status_id`),
+  CONSTRAINT `fk_events_1` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -194,7 +197,7 @@ CREATE TABLE `events` (
 
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
-INSERT INTO `events` VALUES (1,'Hackathon',40);
+INSERT INTO `events` VALUES (1,'Hackathon',40,1);
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -471,6 +474,21 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary table structure for view `vwDisabledEvents`
+--
+
+DROP TABLE IF EXISTS `vwDisabledEvents`;
+/*!50001 DROP VIEW IF EXISTS `vwDisabledEvents`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwDisabledEvents` (
+  `event_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `size` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Temporary table structure for view `vwDisabledProfiles`
 --
 
@@ -486,6 +504,21 @@ SET character_set_client = utf8;
   `email` tinyint NOT NULL,
   `title` tinyint NOT NULL,
   `logo` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `vwEnabledEvents`
+--
+
+DROP TABLE IF EXISTS `vwEnabledEvents`;
+/*!50001 DROP VIEW IF EXISTS `vwEnabledEvents`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwEnabledEvents` (
+  `event_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `size` tinyint NOT NULL
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
@@ -520,6 +553,22 @@ SET character_set_client = utf8;
   `user_id` tinyint NOT NULL,
   `username` tinyint NOT NULL,
   `password` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `vwEvents`
+--
+
+DROP TABLE IF EXISTS `vwEvents`;
+/*!50001 DROP VIEW IF EXISTS `vwEvents`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwEvents` (
+  `event_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `size` tinyint NOT NULL,
+  `status` tinyint NOT NULL
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
@@ -856,6 +905,25 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `vwDisabledEvents`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwDisabledEvents`*/;
+/*!50001 DROP VIEW IF EXISTS `vwDisabledEvents`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwDisabledEvents` AS select `e`.`id` AS `event_id`,`e`.`name` AS `name`,`e`.`size` AS `size` from `events` `e` where (`e`.`status_id` = 0) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `vwDisabledProfiles`
 --
 
@@ -870,6 +938,25 @@ DELIMITER ;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `vwDisabledProfiles` AS select `u`.`id` AS `user_id`,`p`.`id` AS `profile_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `logo` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status_id` = 0) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vwEnabledEvents`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwEnabledEvents`*/;
+/*!50001 DROP VIEW IF EXISTS `vwEnabledEvents`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwEnabledEvents` AS select `e`.`id` AS `event_id`,`e`.`name` AS `name`,`e`.`size` AS `size` from `events` `e` where (`e`.`status_id` = 1) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -908,6 +995,25 @@ DELIMITER ;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `vwEnabledUsers` AS select `u`.`id` AS `user_id`,`u`.`username` AS `username`,`u`.`password` AS `password` from `users` `u` where (`u`.`status_id` = 1) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vwEvents`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwEvents`*/;
+/*!50001 DROP VIEW IF EXISTS `vwEvents`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwEvents` AS select `e`.`id` AS `event_id`,`e`.`name` AS `name`,`e`.`size` AS `size`,`s`.`description` AS `status` from (`events` `e` join `status` `s` on((`e`.`status_id` = `s`.`id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1016,4 +1122,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-18 18:24:29
+-- Dump completed on 2014-08-18 18:37:58
