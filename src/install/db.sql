@@ -148,13 +148,13 @@ INSERT INTO `content_types` VALUES (1,'Profile Logo'),(2,'Team Logo'),(3,'Pictur
 UNLOCK TABLES;
 
 --
--- Table structure for table `event_members`
+-- Table structure for table `event_applications`
 --
 
-DROP TABLE IF EXISTS `event_members`;
+DROP TABLE IF EXISTS `event_applications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `event_members` (
+CREATE TABLE `event_applications` (
   `event_id` int(11) NOT NULL,
   `application_id` int(11) NOT NULL,
   KEY `fk_project_members_2_idx` (`application_id`),
@@ -165,12 +165,39 @@ CREATE TABLE `event_members` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `event_members`
+-- Dumping data for table `event_applications`
 --
 
-LOCK TABLES `event_members` WRITE;
-/*!40000 ALTER TABLE `event_members` DISABLE KEYS */;
-/*!40000 ALTER TABLE `event_members` ENABLE KEYS */;
+LOCK TABLES `event_applications` WRITE;
+/*!40000 ALTER TABLE `event_applications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `event_applications` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `event_teams`
+--
+
+DROP TABLE IF EXISTS `event_teams`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_teams` (
+  `event_id` int(11) NOT NULL,
+  `team_id` int(11) NOT NULL,
+  KEY `fk_event_teams_1_idx` (`event_id`),
+  KEY `fk_event_teams_2_idx` (`team_id`),
+  CONSTRAINT `fk_event_teams_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_event_teams_2` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `event_teams`
+--
+
+LOCK TABLES `event_teams` WRITE;
+/*!40000 ALTER TABLE `event_teams` DISABLE KEYS */;
+INSERT INTO `event_teams` VALUES (1,1),(1,2),(1,3);
+/*!40000 ALTER TABLE `event_teams` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -633,7 +660,9 @@ SET character_set_client = utf8;
   `team_id` tinyint NOT NULL,
   `team_name` tinyint NOT NULL,
   `team_size` tinyint NOT NULL,
-  `logo` tinyint NOT NULL
+  `logo` tinyint NOT NULL,
+  `event_id` tinyint NOT NULL,
+  `event_name` tinyint NOT NULL
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
@@ -1089,7 +1118,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vwTeams` AS select `t`.`id` AS `team_id`,`t`.`name` AS `team_name`,`t`.`size` AS `team_size`,`c`.`path` AS `logo` from ((`teams` `t` join `team_content` `tc` on((`t`.`id` = `tc`.`team_id`))) join `content` `c` on((`tc`.`content_id` = `c`.`id`))) */;
+/*!50001 VIEW `vwTeams` AS select `t`.`id` AS `team_id`,`t`.`name` AS `team_name`,`t`.`size` AS `team_size`,`c`.`path` AS `logo`,`e`.`id` AS `event_id`,`e`.`name` AS `event_name` from ((((`teams` `t` join `event_teams` `et` on((`t`.`id` = `et`.`team_id`))) join `events` `e` on((`et`.`event_id` = `e`.`id`))) join `team_content` `tc` on((`t`.`id` = `tc`.`team_id`))) join `content` `c` on((`tc`.`content_id` = `c`.`id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1122,4 +1151,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-18 18:37:58
+-- Dump completed on 2014-08-18 18:55:12
