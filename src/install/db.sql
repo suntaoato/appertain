@@ -384,7 +384,7 @@ CREATE TABLE `team_content` (
 
 LOCK TABLES `team_content` WRITE;
 /*!40000 ALTER TABLE `team_content` DISABLE KEYS */;
-INSERT INTO `team_content` VALUES (1,1),(2,2),(3,3);
+INSERT INTO `team_content` VALUES (1,1),(2,2),(3,3),(6,10);
 /*!40000 ALTER TABLE `team_content` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -854,6 +854,44 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spNewTeam` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spNewTeam`(IN profileid INT,
+														IN teamname VARCHAR(45),
+														IN teamsize TINYINT(4),
+														IN teamlogo VARCHAR(100),
+	                                                    IN eventlist TEXT,
+														OUT result INT)
+BEGIN
+  DECLARE teamid INT;
+  DECLARE exit handler for sqlexception
+  BEGIN
+    SET result = 0;
+    ROLLBACK;
+  END;
+  START TRANSACTION;
+  INSERT INTO teams(name, size) VALUES(teamname, teamsize);
+  SET teamid = LAST_INSERT_ID();
+  INSERT INTO team_profiles(team_id, profile_id) VALUES(teamid, profileid);
+  INSERT INTO content(path, type) VALUES(teamlogo, 2);
+  INSERT INTO team_content(team_id, content_id) VALUES(teamid, LAST_INSERT_ID());
+  CALL spSetTeamEvents(teamid, eventlist);
+  SET result = teamid;
+  COMMIT;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `spSetApplicationEvents` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -918,6 +956,31 @@ BEGIN
     SET skills = SUBSTRING(skills, CHAR_LENGTH(skillid) + 2);
 END WHILE;
 
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `spSetTeamEvents` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spSetTeamEvents`(IN teamid INT, IN eventlist TEXT)
+BEGIN
+  DECLARE eventid text;
+  DELETE FROM event_teams WHERE team_id = teamid;
+  WHILE eventlist != '' DO
+    SET eventid = SUBSTRING_INDEX(eventlist, '|', 1);
+    INSERT INTO event_teams(team_id, event_id) VALUES(teamid, eventid);
+    SET eventlist = SUBSTRING(eventlist, CHAR_LENGTH(eventid) + 2);
+  END WHILE;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1219,4 +1282,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-18 19:21:03
+-- Dump completed on 2014-08-18 20:01:26
