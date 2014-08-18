@@ -487,6 +487,22 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary table structure for view `vwAvailableTeams`
+--
+
+DROP TABLE IF EXISTS `vwAvailableTeams`;
+/*!50001 DROP VIEW IF EXISTS `vwAvailableTeams`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwAvailableTeams` (
+  `team_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `max_seats` tinyint NOT NULL,
+  `open_seats` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Temporary table structure for view `vwContentTypes`
 --
 
@@ -645,6 +661,20 @@ SET character_set_client = utf8;
 /*!50001 CREATE TABLE `vwSkills` (
   `skill_id` tinyint NOT NULL,
   `name` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `vwTeamMemberCount`
+--
+
+DROP TABLE IF EXISTS `vwTeamMemberCount`;
+/*!50001 DROP VIEW IF EXISTS `vwTeamMemberCount`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `vwTeamMemberCount` (
+  `team_id` tinyint NOT NULL,
+  `team_size` tinyint NOT NULL
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
@@ -915,6 +945,25 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `vwAvailableTeams`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwAvailableTeams`*/;
+/*!50001 DROP VIEW IF EXISTS `vwAvailableTeams`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwAvailableTeams` AS select `t`.`id` AS `team_id`,`t`.`name` AS `name`,`t`.`size` AS `max_seats`,(`t`.`size` - `tp`.`team_size`) AS `open_seats` from (((`teams` `t` join `vwTeamMemberCount` `tp` on((`t`.`id` = `tp`.`team_id`))) join `event_teams` `et` on((`t`.`id` = `et`.`team_id`))) join `vwEnabledEvents` `e` on((`et`.`event_id` = `e`.`event_id`))) where (`t`.`size` > `tp`.`team_size`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `vwContentTypes`
 --
 
@@ -1105,6 +1154,25 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `vwTeamMemberCount`
+--
+
+/*!50001 DROP TABLE IF EXISTS `vwTeamMemberCount`*/;
+/*!50001 DROP VIEW IF EXISTS `vwTeamMemberCount`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vwTeamMemberCount` AS select `tp`.`team_id` AS `team_id`,count(`tp`.`profile_id`) AS `team_size` from `team_profiles` `tp` group by `tp`.`team_id` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `vwTeams`
 --
 
@@ -1151,4 +1219,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-18 18:55:12
+-- Dump completed on 2014-08-18 19:21:03
