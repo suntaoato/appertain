@@ -18,30 +18,6 @@ USE `appertain`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `account_status`
---
-
-DROP TABLE IF EXISTS `account_status`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `account_status` (
-  `id` tinyint(4) NOT NULL,
-  `description` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `account_status`
---
-
-LOCK TABLES `account_status` WRITE;
-/*!40000 ALTER TABLE `account_status` DISABLE KEYS */;
-INSERT INTO `account_status` VALUES (0,'Disabled'),(1,'Enabled');
-/*!40000 ALTER TABLE `account_status` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `application_event`
 --
 
@@ -332,6 +308,30 @@ INSERT INTO `skills` VALUES (1,'Programming'),(2,'Scripting'),(3,'Level Design')
 UNLOCK TABLES;
 
 --
+-- Table structure for table `status`
+--
+
+DROP TABLE IF EXISTS `status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `status` (
+  `id` tinyint(4) NOT NULL,
+  `description` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `status`
+--
+
+LOCK TABLES `status` WRITE;
+/*!40000 ALTER TABLE `status` DISABLE KEYS */;
+INSERT INTO `status` VALUES (0,'Disabled'),(1,'Enabled');
+/*!40000 ALTER TABLE `status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `team_content`
 --
 
@@ -421,11 +421,11 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT '1',
+  `status_id` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username_UNIQUE` (`username`),
-  KEY `fk_users_1` (`status`),
-  CONSTRAINT `fk_users_1` FOREIGN KEY (`status`) REFERENCES `account_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `fk_users_1` (`status_id`),
+  CONSTRAINT `fk_users_1` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -553,7 +553,8 @@ SET character_set_client = utf8;
   `handle` tinyint NOT NULL,
   `email` tinyint NOT NULL,
   `title` tinyint NOT NULL,
-  `logo` tinyint NOT NULL
+  `logo` tinyint NOT NULL,
+  `status` tinyint NOT NULL
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
@@ -830,7 +831,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vwApprovedApplications` AS select `a`.`id` AS `application_id`,`a`.`description` AS `description`,`a`.`rating` AS `rating`,`ap`.`description` AS `approval`,`a`.`profile_id` AS `profile_id` from (((`applications` `a` join `profiles` `p` on((`a`.`profile_id` = `p`.`id`))) join `users` `u` on((`p`.`user_id` = `u`.`id`))) join `approval` `ap`) where ((`a`.`approval_id` = `ap`.`id`) and (`a`.`approval_id` = 1) and (`u`.`status` = 1)) */;
+/*!50001 VIEW `vwApprovedApplications` AS select `a`.`id` AS `application_id`,`a`.`description` AS `description`,`a`.`rating` AS `rating`,`ap`.`description` AS `approval`,`a`.`profile_id` AS `profile_id` from (((`applications` `a` join `profiles` `p` on((`a`.`profile_id` = `p`.`id`))) join `users` `u` on((`p`.`user_id` = `u`.`id`))) join `approval` `ap`) where ((`a`.`approval_id` = `ap`.`id`) and (`a`.`approval_id` = 1) and (`u`.`status_id` = 1)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -868,7 +869,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vwDisabledProfiles` AS select `u`.`id` AS `user_id`,`p`.`id` AS `profile_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `logo` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status` = 0) */;
+/*!50001 VIEW `vwDisabledProfiles` AS select `u`.`id` AS `user_id`,`p`.`id` AS `profile_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `logo` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status_id` = 0) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -887,7 +888,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vwEnabledProfiles` AS select `p`.`id` AS `profile_id`,`u`.`id` AS `user_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `logo` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status` = 1) */;
+/*!50001 VIEW `vwEnabledProfiles` AS select `p`.`id` AS `profile_id`,`u`.`id` AS `user_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `logo` from (((`users` `u` join `profiles` `p` on((`p`.`user_id` = `u`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) where (`u`.`status_id` = 1) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -906,7 +907,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vwEnabledUsers` AS select `u`.`id` AS `user_id`,`u`.`username` AS `username`,`u`.`password` AS `password` from `users` `u` where (`u`.`status` = 1) */;
+/*!50001 VIEW `vwEnabledUsers` AS select `u`.`id` AS `user_id`,`u`.`username` AS `username`,`u`.`password` AS `password` from `users` `u` where (`u`.`status_id` = 1) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -944,7 +945,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vwProfiles` AS select `p`.`id` AS `profile_id`,`p`.`user_id` AS `user_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `logo` from ((`profiles` `p` join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) */;
+/*!50001 VIEW `vwProfiles` AS select `p`.`id` AS `profile_id`,`p`.`user_id` AS `user_id`,`p`.`name` AS `name`,`p`.`handle` AS `handle`,`p`.`email` AS `email`,`p`.`title` AS `title`,`c`.`path` AS `logo`,`s`.`description` AS `status` from ((((`profiles` `p` join `users` `u` on((`p`.`user_id` = `u`.`id`))) join `status` `s` on((`u`.`status_id` = `s`.`id`))) join `profile_content` `pc` on((`p`.`id` = `pc`.`profile_id`))) join `content` `c` on((`c`.`id` = `pc`.`content_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1001,7 +1002,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vwUnapprovedApplications` AS select `a`.`id` AS `application_id`,`a`.`description` AS `description`,`a`.`rating` AS `rating`,`ap`.`description` AS `approval`,`a`.`profile_id` AS `profile_id` from (((`applications` `a` join `profiles` `p` on((`a`.`profile_id` = `p`.`id`))) join `users` `u` on((`p`.`user_id` = `u`.`id`))) join `approval` `ap`) where ((`a`.`approval_id` = `ap`.`id`) and (`a`.`approval_id` in (0,2)) and (`u`.`status` = 1)) */;
+/*!50001 VIEW `vwUnapprovedApplications` AS select `a`.`id` AS `application_id`,`a`.`description` AS `description`,`a`.`rating` AS `rating`,`ap`.`description` AS `approval`,`a`.`profile_id` AS `profile_id` from (((`applications` `a` join `profiles` `p` on((`a`.`profile_id` = `p`.`id`))) join `users` `u` on((`p`.`user_id` = `u`.`id`))) join `approval` `ap`) where ((`a`.`approval_id` = `ap`.`id`) and (`a`.`approval_id` in (0,2)) and (`u`.`status_id` = 1)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1015,4 +1016,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-13 21:28:15
+-- Dump completed on 2014-08-18 18:24:29
