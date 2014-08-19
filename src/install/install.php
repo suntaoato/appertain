@@ -3,11 +3,16 @@
 include_once(__DIR__ . '/../top.php');
 
 $GLOBALS['dbms']->sql_connect();
-run_sql_file();
+print_r(run_sql_file());
 
-function run_sql_file(){
+function run_sql_file(){ 
+$total = $success = 0;   
+$dir = new DirectoryIterator(dirname(__FILE__));
+    foreach ($dir as $fileinfo) {
+      if (!$fileinfo->isDot()) {
+        
     //load file
-    $commands = file_get_contents(__DIR__ . '/db.sql');
+    $commands = file_get_contents($fileinfo->getFilename());
 
     //delete comments
     $lines = explode("\n",$commands);
@@ -23,13 +28,14 @@ function run_sql_file(){
     $commands = explode(";", $commands);
 
     //run commands
-    $total = $success = 0;
     foreach($commands as $command){
         if(trim($command)){
             $success += ($GLOBALS['dbms']->sql_query($command)==false ? 0 : 1);
             $total += 1;
         }
     }
+}
+}
 
     //return number of successful queries and total number of queries found
     return array(
