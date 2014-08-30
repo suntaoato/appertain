@@ -38,7 +38,7 @@ class user
 	public function __construct($username, $password, $create = false, $details = NULL)
 	{	
 		$this->username    = $username;
-		$this->encpassword = encryptPassword($password);
+		$this->encpassword = $this->encryptPassword($password);
 		
 		if(!$create)
 		{		
@@ -61,7 +61,7 @@ class user
 	{
 		$GLOBALS['dbms']->sql_connect();
 		
-		$prepare = $GLOBALS['dbms']->connection->prepare("SELECT id, username FROM vwEnabledUsers WHERE username=? AND password=?");
+		$prepare = $GLOBALS['dbms']->connection->prepare("SELECT user_id, username FROM vwEnabledUsers WHERE username=? AND password=?");
 		
 		if(!$prepare)
 		{
@@ -107,7 +107,7 @@ class user
 		{
 			$GLOBALS['dbms']->sql_connect();
 			
-			$prepare = $GLOBALS['dbms']->connection->prepare("INSERT INTO  user (username, password) VALUES (?,?)");
+			$prepare = $GLOBALS['dbms']->connection->prepare("CALL spNewUser(?, ?)");
 			
 			if(!$prepare)
 			{
@@ -124,7 +124,17 @@ class user
 				error_log("Execute failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
 			}
 			
-			$this->userid = $GLOBALS['dbms']->sql_lastid();
+			$id_out = NULL;
+			
+			if (!$prepare->bind_result($id_out)) 
+			{
+         	echo "Bind failed: (" . $prepare->errno . ") " . $prepare->error;
+			}			
+			
+			while ($prepare->fetch())			
+			{			
+				$this->userid = $id_out;
+			}			
 			
 			return true;	
 		}

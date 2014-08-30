@@ -36,6 +36,8 @@ class profile
 	public  $surname;
 	public  $email;
 	public  $nick;
+	public  $title;
+	public  $skills;
 	public  $created;
 	
 	public function __construct($userid, $create = false, $details = NULL)
@@ -44,7 +46,7 @@ class profile
 		
 		if(!$create)
 		{
-			fetchProfile();
+			$this->fetchProfile();
 		}
 		else
 		{
@@ -52,8 +54,10 @@ class profile
 			$this->surname  = $details['surname'];
 			$this->email    = $details['email'];
 			$this->nick     = $details['nick'];
+			$this->skills   = $details['skills'];
+			$this->title    = $details['title'];
 			
-			if(createProfile())
+			if($this->createProfile())
 			{
 				$this->created = true;
 			}
@@ -66,7 +70,7 @@ class profile
 	{
 		$GLOBALS['dbms']->sql_connect();
 		
-		$prepare = $GLOBALS['dbms']->connection->prepare("SELECT `name`, handle, email, path FROM vwEnabledProfiles WHERE userid=?");
+		$prepare = $GLOBALS['dbms']->connection->prepare("SELECT `name`, handle, email, logo, title FROM vwEnabledProfiles WHERE user_id=?");
 		
 		if(!$prepare)
 		{
@@ -87,8 +91,9 @@ class profile
 		$brHandle = NULL;
 		$brEmail = NULL;
 		$brPath = NULL;
+		$brTitle = NULL;
 		
-		if(!$prepare->bind_result($brName, $brHandle, $brEmail, $brPath))
+		if(!$prepare->bind_result($brName, $brHandle, $brEmail, $brPath, $brTitle))
 		{
 			 error_log("Binding output parameters failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
 		}	
@@ -98,11 +103,12 @@ class profile
 				
 		if(!is_null($brName))
 		{
-			$this->forename      = split(" ", $brName)[0];
-			$this->surname       = split(" ", $brName)[1];
+			list($this->forename, $this->surname) = split(" ",$brName);
+			
 			$this->email         = $brEmail;
 			$this->nick          = $brHandle;
 			$this->picurl        = $brPath;
+			$this->title         = $brTitle;
 			
 			return true;
 		}
@@ -116,14 +122,20 @@ class profile
 	{
 			$GLOBALS['dbms']->sql_connect();
 			
-			$prepare = $GLOBALS['dbms']->connection->prepare("INSERT INTO profile (`name`, handle, email) VALUES (?,?,?)");
+			$prepare = $GLOBALS['dbms']->connection->prepare("CALL spNewProfile(?, ?, ?, ?, ?, ?, ?)");
 			
 			if(!$prepare)
 			{
 				error_log("Prepare failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
 			}	
 		
-			if(!$prepare->bind_param("sss", $this->getName, $this->nick, $this->email))
+			if(!$prepare->bind_param("issssss", $this->userid, 
+															$this->getName, 
+															$this->nick, 
+															$this->email, 
+															$this->picurl, 
+															$this->title, 
+															$this->skills))
 			{
 				error_log("Binding parameters failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
 			}
@@ -133,12 +145,20 @@ class profile
 				error_log("Execute failed: (" . $GLOBALS['dbms']->connection->errno . ") " . $GLOBALS['dbms']->connection->error);
 			}
 			
-			$this->profileid = $GLOBALS['dbms']->sql_lastid();
+			$id_out = NULL;
 			
-			return true;	
-		}
-		
-		return false;		
+			if (!$prepare->bind_result($id_out)) 
+			{
+         	echo "Bind failed: (" . $prepare->errno . ") " . $prepare->error;
+			}			
+			
+			while ($prepare->fetch())			
+			{			
+				$this->profileid = $id_out;
+				return true;
+			}
+			
+			return false;			
 	}
 	
 	public function getName()
