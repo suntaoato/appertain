@@ -24,22 +24,18 @@ SOFTWARE.
 */
 
 require_once(__DIR__ . '/../../top.php');
-require_once(__DIR__ . '/../../classes/core/user.php');
-require_once(__DIR__ . '/../../classes/core/profile.php');
+require_once(__DIR__ . '/../../classes/core/skill.php');
 
-$user = new \Classes\Core\user($_POST['details']['user'], $_POST['details']['password'], true, $_POST['details']);
+$skills = null;
 
-$retArray = array();	
-
-if($user->created)
-{
-	$retArray['created'] = true;
-} 
-else 
-{
-	$retArray['created'] = false;
+if(!is_null($_POST['skillid'])) {
+	   $skills = new \Classes\Core\skill($_POST['skillid']);
+	   $skills = $skills->name;
+} else {
+		$skills = \Classes\Core\skill::getAllSkills();
 }
 
-echo(json_encode($retArray));	
+
+echo(json_encode($skills));	
 
 ?>

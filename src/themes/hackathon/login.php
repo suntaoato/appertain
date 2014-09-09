@@ -6,7 +6,7 @@
 <title>Login :: Hackathon</title>
 <meta name="generator" content="Bluefish 2.2.5" >
 <meta name="author" content="root" >
-<meta name="date" content="2014-08-30T14:09:45+0200" >
+<meta name="date" content="2014-09-01T19:35:05+0200" >
 <meta name="copyright" content="Dreamhack">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -30,6 +30,14 @@
 
 <link href="themes/hackathon/css/main.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="themes/hackathon/js/main.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function () {
+   $("#pwdcheck").keyup(checkPasswordMatch);
+});
+
+</script>
 
 </head>
 
@@ -91,7 +99,7 @@
 		  					<label class="control-label" for="pwdcheck"></label>
  		 					<div class="controls">
  		   					<input id="pwdcheck" name="pwdcheck" type="password" placeholder="Confirm Password" class="form-control" required="">
- 		   					<p class="help-block">Confirm your password.</p>
+ 		   					<p id="pwdcheck_info" class="help-block"></p>
 		  					</div>
 						</div>
 
@@ -139,11 +147,24 @@
  		 					</div>
 						</div>
 
+						<div class="control-group">
+							<label class="control-label" for="why">Why You:</label>
+							<div class="controls">
+								<textarea id="why" name="why" class="form-control">
+								</textarea>
+							</div>						
+						</div>
+
 						<!-- Select Multiple -->
 						<div class="control-group">
  		 					<label class="control-label" for="skills">Select Skills:</label>
 		  					<div class="controls">
  		   					<select id="skills" name="skills" class="form-control" multiple="multiple">
+ 		   					<?php 
+								
+																
+								 		   					
+ 		   					 ?>
  		   					</select>
  		 					</div>
 						</div>
@@ -157,13 +178,14 @@
 						</div>
 
 						</fieldset>
-					</form>
-				</div>
 
-			<div class="modal-footer">
-        		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        		<button type="button" class="btn btn-primary">Submit</button>
-      	</div>				
+							<div class="modal-footer">
+        						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        						<button id="btnregister" name="btnregister" type="submit" class="btn btn-primary">Submit</button>
+      					</div>				
+				
+					</form>
+				</div>				
 				
 			</div>
 		</div>
