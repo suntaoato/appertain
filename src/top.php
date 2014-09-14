@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 //CHECK FOR THE EXISTENCE OF CONFIG.
 require_once(__DIR__ . "/classes/conf/conf.php");
 require_once(__DIR__ . "/classes/db/dbglobal.php");

@@ -2,7 +2,7 @@
 ## This is just a simple helper script to set up db while in development
 ## Replace this with proper setups
 echo "Recreating Schema";
-mysql -u root -ppassword < ./appertain_schema.sql
+mysql -u root -ppassword appertain < ./appertain_schema.sql
 echo "Done";
 for t in tables/*.sql;
  do

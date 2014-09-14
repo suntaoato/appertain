@@ -2,15 +2,17 @@ function checkPasswordMatch() {
     var password = $("#password").val();
     var confirmPassword = $("#pwdcheck").val();
 
-    if (password != confirmPassword)
+    if (password !== confirmPassword) {
         $("#pwdcheck_info").removeClass("alert alert-success");
         $("#pwdcheck_info").addClass("alert alert-danger animated fadeInUp").html("Passwords do not match!");
-		  $("#btnregister").enabled = false;
-    else
+        $("#btnregister").enabled = false;
+    }
+    else {
         $("#pwdcheck_info").removeClass("alert alert-danger animated fadeInUp");
         $("#pwdcheck_info").addClass("alert alert-success").html("Passwords match!");
         $("#btnregister").enabled = true;
-}
+    }
+ }
 
 $(function(){
 
@@ -30,10 +32,10 @@ $("#output").removeClass('alert alert-success');
             	 e.preventDefault();        	
                 
                 //little validation just to check username
-                if (username.val() != "" && password.val() != "") {
+                if (username.val() !== "" && password.val() !== "") {
 							$.ajax({
 								type: "POST",
-								url:  "../../modules/login/login.php",
+								url:  "/modules/login/login.php",
 								data: "user=" + username.val() + "&password=" + password.val(),
 								success: function(dt)
 								{ 
@@ -96,11 +98,11 @@ $("#output").removeClass('alert alert-success');
             
             $.ajax({
 								type: "POST",
-								url:  "../../modules/login/register.php",
-								data: {data: dataString}
-								success: function(dt)
+								url:  "/modules/login/register.php",
+								data: {data: jsonString},
+								success: function(regdt)
 								{ 
 								}
 				});
 			});
-});
+  });
